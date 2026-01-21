@@ -47,8 +47,9 @@ namespace Balla.Input
         internal bool Grab => GetValue(grab);
         internal bool PrevEquip => GetValue(prevEquip);
         internal bool NextEquip => GetValue(nextEquip);
+        internal bool Reload => GetValue(reload);
         Vector2 move, look;
-        bool crouch, sprint, interact, attack, altAttack, grab, prevEquip, nextEquip, jump;
+        bool crouch, sprint, interact, attack, altAttack, grab, prevEquip, nextEquip, jump, reload;
 
         bool GetValue(bool target)
         {
@@ -88,6 +89,7 @@ namespace Balla.Input
             SubscribeInput(actions.Player.Next, GetNextEquip);
             SubscribeInput(actions.Player.Previous, GetPrevEquip);
             SubscribeInput(actions.Player.Pause, GetPause);
+            SubscribeInput(actions.Player.Reload, GetReload);
         }
 
         public void Terminate()
@@ -104,6 +106,8 @@ namespace Balla.Input
             UnsubscribeInput(actions.Player.Next, GetNextEquip);
             UnsubscribeInput(actions.Player.Previous, GetPrevEquip);
             UnsubscribeInput(actions.Player.Pause, GetPause);
+            UnsubscribeInput(actions.Player.Reload, GetReload);
+
             actions.Disable();
             actions.Dispose();
         }
@@ -194,6 +198,10 @@ namespace Balla.Input
             {
                 TogglePause();
             }
+        }
+        void GetReload(InputAction.CallbackContext ctx)
+        {
+            reload = ctx.ReadValueAsButton();
         }
         #endregion
 
