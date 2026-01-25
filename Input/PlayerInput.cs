@@ -25,6 +25,7 @@ namespace Balla.Input
         public static PlayerInput InputManager;
 
         public static Action<bool> OnPauseChanged;
+        public static Action<bool> OnSocialMenuTriggered;
 
         internal Vector2 Move => GetValue(move);
         internal Vector2 Look => GetValue(look);
@@ -64,15 +65,7 @@ namespace Balla.Input
         public float lookSpeed = 15;
 
         public Action<bool> OnPause;
-
-        public void SubscribeToActionPerform(InputAction action, Action target)
-        {
-            action.performed += (ctx) => target?.Invoke();
-        }
-        public void UnsubscribeFromActionPerform(InputAction action, Action target)
-        {
-            action.performed -= (ctx) => target?.Invoke();
-        }
+        public Action<bool> OnSocial;
         public void Initialised()
         {
             actions = new CS_Actions();
@@ -90,6 +83,7 @@ namespace Balla.Input
             SubscribeInput(actions.Player.Previous, GetPrevEquip);
             SubscribeInput(actions.Player.Pause, GetPause);
             SubscribeInput(actions.Player.Reload, GetReload);
+            SubscribeInput(actions.Player.OpenSocial, GetSocial);
         }
 
         public void Terminate()
@@ -107,6 +101,7 @@ namespace Balla.Input
             UnsubscribeInput(actions.Player.Previous, GetPrevEquip);
             UnsubscribeInput(actions.Player.Pause, GetPause);
             UnsubscribeInput(actions.Player.Reload, GetReload);
+            UnsubscribeInput(actions.Player.OpenSocial, GetSocial);
 
             actions.Disable();
             actions.Dispose();
@@ -203,12 +198,28 @@ namespace Balla.Input
         {
             reload = ctx.ReadValueAsButton();
         }
+
+        void GetSocial(InputAction.CallbackContext ctx)
+        {
+            if (ctx.performed)
+            {
+                OpenSocialMenu();
+            }
+        }
         #endregion
 
         void TogglePause()
         {
             SetPause(!gamePaused);
         }
+
+        void OpenSocialMenu()
+        {
+            bool state = FriendsMenu.open;
+            OnSocialMenuTriggered?.Invoke(!state);
+            SetPause(!state);
+        }
+
         public void SetPause(bool paused)
         {
             gamePaused = paused;
