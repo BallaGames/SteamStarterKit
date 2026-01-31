@@ -26,7 +26,14 @@ namespace Balla.Input
 
         public static Action<bool> OnPauseChanged;
         public static Action<bool> OnSocialMenuTriggered;
-
+        public void SubscribeToActionPerform(InputAction action, Action target)
+        {
+            action.performed += (ctx) => target?.Invoke();
+        }
+        public void UnsubscribeFromActionPerform(InputAction action, Action target)
+        {
+            action.performed -= (ctx) => target?.Invoke();
+        }
         internal Vector2 Move => GetValue(move);
         internal Vector2 Look => GetValue(look);
         internal bool Jump
